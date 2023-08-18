@@ -17,6 +17,11 @@ export type ImageZoomProps = Omit<ImageProps, 'source'> & {
    */
   maxScale?: number;
   /**
+   * The maximum scale allowed for doubleTap.
+   * @default 3
+   */
+  doubleTapScale?: number;
+  /**
    * The minimum number of pointers required to enable panning.
    * @default 2
    */
@@ -36,6 +41,11 @@ export type ImageZoomProps = Omit<ImageProps, 'source'> & {
    * @default true
    */
   isPinchEnabled?: boolean;
+    /**
+   * Determines whether double tap is enabled.
+   * @default false
+   */
+  isDoubleTapEnabled?: boolean;
   /**
    * A callback triggered when the image interaction starts.
    */
@@ -65,6 +75,10 @@ export type ImageZoomProps = Omit<ImageProps, 'source'> & {
    * @default undefined
    */
   source?: ImageSourcePropType;
+  /**
+   * Child components (Animated.Image for example)
+   */ 
+  children?: JSX.Element;
 };
 
 export type ImageZoomUseLayoutProps = Pick<ImageZoomProps, 'onLayout'>;
@@ -90,10 +104,12 @@ export type ImageZoomUseGesturesProps = Pick<ImageZoomLayoutState, 'center'> &
     ImageZoomProps,
     | 'minScale'
     | 'maxScale'
+    | 'doubleTapScale'
     | 'minPanPointers'
     | 'maxPanPointers'
     | 'isPanEnabled'
     | 'isPinchEnabled'
+    | 'isDoubleTapEnabled'
     | 'onInteractionStart'
     | 'onInteractionEnd'
     | 'onPinchStart'

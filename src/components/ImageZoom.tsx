@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { ImageBackground, StyleSheet } from 'react-native';
 import { GestureDetector } from 'react-native-gesture-handler';
 import Animated from 'react-native-reanimated';
 
@@ -18,10 +18,12 @@ const ImageZoom: React.FC<ImageZoomProps> = ({
   uri = '',
   minScale,
   maxScale,
+  doubleTapScale,
   minPanPointers,
   maxPanPointers,
   isPanEnabled,
   isPinchEnabled,
+  isDoubleTapEnabled,
   onInteractionStart,
   onInteractionEnd,
   onPinchStart,
@@ -30,6 +32,7 @@ const ImageZoom: React.FC<ImageZoomProps> = ({
   onPanEnd,
   onLayout,
   style = {},
+  children,
   ...props
 }) => {
   const { center, onImageLayout } = useImageLayout({ onLayout });
@@ -37,10 +40,12 @@ const ImageZoom: React.FC<ImageZoomProps> = ({
     center,
     minScale,
     maxScale,
+    doubleTapScale,
     minPanPointers,
     maxPanPointers,
     isPanEnabled,
     isPinchEnabled,
+    isDoubleTapEnabled,
     onInteractionStart,
     onInteractionEnd,
     onPinchStart,
@@ -49,15 +54,19 @@ const ImageZoom: React.FC<ImageZoomProps> = ({
     onPanEnd,
   });
 
+  const AnimatedImageBackground = Animated.createAnimatedComponent(ImageBackground)
   return (
     <GestureDetector gesture={gestures}>
-      <Animated.Image
-        style={[styles.image, style, animatedStyle]}
-        source={{ uri }}
-        resizeMode="contain"
-        onLayout={onImageLayout}
-        {...props}
-      />
+      <Animated.View onLayout={onImageLayout}>
+        <AnimatedImageBackground 
+          style={[styles.image, style, animatedStyle]}
+          source={{ uri }}
+          resizeMode="contain"
+          {...props}
+        >
+          {children}
+        </AnimatedImageBackground> 
+      </Animated.View>
     </GestureDetector>
   );
 };
