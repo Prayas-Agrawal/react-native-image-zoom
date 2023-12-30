@@ -29,6 +29,7 @@
   "scripts": {
     "test": "jest",
     "typecheck": "tsc --noEmit",
+    "install": "yarn run build",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "prepack": "bob build",
     "release": "release-it",
