@@ -43,6 +43,7 @@ export const useGestures = ({
 
   const scale = useSharedValue(1);
   const initialFocal = { x: useSharedValue(0), y: useSharedValue(0) };
+  const lastScale = useSharedValue(0)
   const focal = { x: useSharedValue(0), y: useSharedValue(0) };
   const translate = { x: useSharedValue(0), y: useSharedValue(0) };
 
@@ -55,6 +56,7 @@ export const useGestures = ({
     focal.y.value = withTiming(0);
     translate.x.value = withTiming(0);
     translate.y.value = withTiming(0);
+    lastScale.value = 0
   }, [
     focal.x,
     focal.y,
@@ -63,6 +65,7 @@ export const useGestures = ({
     scale,
     translate.x,
     translate.y,
+    lastScale
   ]);
 
   const onInteractionStarted = () => {
@@ -133,19 +136,23 @@ export const useGestures = ({
     .enabled(isPinchEnabled)
     .onStart(
       (event: GestureStateChangeEvent<PinchGestureHandlerEventPayload>) => {
-        runOnJS(onPinchStarted)();
-        initialFocal.x.value = event.focalX;
-        initialFocal.y.value = event.focalY;
+        if (!isPinching.current) {
+         runOnJS(onPinchStarted)();
+         initialFocal.x.value = event.focalX;
+         initialFocal.y.value = event.focalY;
+        }
       }
     )
     .onUpdate((event: GestureUpdateEvent<PinchGestureHandlerEventPayload>) => {
       scale.value = clamp(event.scale, minScale, maxScale);
+      scale.value = clamp(event.scale + lastScale.value, minScale, maxScale);
       focal.x.value = (center.x - initialFocal.x.value) * (scale.value - 1);
       focal.y.value = (center.y - initialFocal.y.value) * (scale.value - 1);
     })
-    .onEnd(() => {
-      runOnJS(onPinchEnded)();
-    });
+    .onEnd((event: any) => {
+      lastScale.value = scale.value - 1
+    })
+    ;
 
     const doubleTapGesture = Gesture.Tap()
     .enabled(isDoubleTapEnabled)
